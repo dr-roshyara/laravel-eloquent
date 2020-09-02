@@ -46,8 +46,40 @@ for this use the following command
     php artisan tinker  
     factory(App\Post::class,1)->create() // this will create 1 
     factory(App\Post::class,100)->create() // this will create 100  
-# 
- 
+#create a Comment Model and table etc 
+    php artisan make:model Tag -ar 
+# Create a resourceful Tag table 
+    php artisan make:model Tag  -ar 
+#Create a post_tag table 
+    php artisan make:migration create_post_tag_table --create=post_tag
+#EDit the post_tag table as folllowing 
+public function up()
+    {
+        Schema::create('post_tag', function (Blueprint $table) {
+            $table->id();
+            $table->unsignedInteger('post_id');
+            $table->unsignedInteger('tag_id');
+
+            $table->timestamps();
+        });
+    }
+#Use the following commands 
+    php artisan tinker 
+    $tag =App\Tag::find(1)
+    //Attach this tag to post with post id =10 
+    $tag->posts()->attach(10)
+    $post =App\Post::where('id', '=', 100)
+    //attach the tag with id of 1 with this post 
+    $post->tags->attach(1)
+    //look at the post 
+    $post->tags 
+    exit 
+    
+
+
+
+
+
     
 
 
