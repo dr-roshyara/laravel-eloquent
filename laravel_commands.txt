@@ -1,0 +1,5 @@
+#Install the following ppackage 
+    composer require "laracasts/generators"
+#Install laravel testdummy 
+     composer  require laracasts/testdummy  --dev
+#
