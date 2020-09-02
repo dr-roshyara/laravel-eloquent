@@ -1,5 +1,54 @@
-#Install the following ppackage 
-    composer require "laracasts/generators"
-#Install laravel testdummy 
+#This series is based on the tutorial of Laracasts. I am learning now Laravel Eleqoent . This series has 5 videos. I will learn them one by one. 
+#start of first video: 
+##Install the following ppackage 
+    composer require "laracasts/generators" --dev
+##Install laravel testdummy 
      composer  require laracasts/testdummy  --dev
-#
+#run the follwoing commands 
+    npm install 
+    npm run dev     
+##Open the config/app.php file and add        
+    Laracasts\Generators\GeneratorsServiceProder::class, 
+##Create a migration for post using the following command 
+    php artisan make:migration:schema create_posts_table --schema="user_id:integer:foreign, title:string,body:text"
+    #This command builds the schema automatically. Howeever we need to edit the migration_post table as following 
+      Schema::create('posts', function (Blueprint $table) {
+            $table->increments('id');
+            $table->foreignId('user_id')->constrained()->onDelete('cascade');
+            $table->string('title');
+            $table->text('body');
+            $table->timestamps();
+        });
+##Set up the datbank 
+     -> Go to the .env file 
+     ->create  necessary database and login  data 
+##Run the migrate command to migrate the tables 
+    php artisan migrate 
+#I  used the command 
+    php artisan db:seed posts 
+#Then I edited the seeder files lying on the seeds directory 
+#add on the post seeds like : 
+    TestDummy::times(50)->create('App\Post');
+#add the in the main databaseSeeder.php file  also like following 
+    public function run()
+    {
+        // $this->call(UserSeeder::class);
+        $this->call(PostsTableSeeder::class);
+    }
+#Now  create a factory for the Post 
+for this use the following command 
+    php artisan make:factory PostFactory --model Post 
+# After creating a factory for post and User. see database\factories 
+#Run  the following command again 
+    php artisan db:seed 
+#This command will create dummy datasets 
+#Alteratively you can go to 
+    php artisan tinker  
+    factory(App\Post::class,1)->create() // this will create 1 
+    factory(App\Post::class,100)->create() // this will create 100  
+# 
+ 
+    
+
+
+
