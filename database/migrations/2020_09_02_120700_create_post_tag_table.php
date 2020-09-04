@@ -14,15 +14,16 @@ class CreatePostTagTable extends Migration
     public function up()
     {
         Schema::create('post_tag', function (Blueprint $table) {
-            $table->id();
-            $table->unsignedInteger('post_id');
-            $table->unsignedInteger('tag_id');
+            $table->primary(['post_id','tag_id']);
+            // $table->id();
+            $table->unsignedInteger('post_id')->constrained()->onDelete('cascade');
+            $table->unsignedInteger('tag_id')->constrained()->onDelete('cascade');
 
             $table->timestamps();
         });
     }
 
-    /**
+    /** 
      * Reverse the migrations.
      *
      * @return void

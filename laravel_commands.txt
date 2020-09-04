@@ -74,9 +74,35 @@ public function up()
     //look at the post 
     $post->tags 
     exit 
-    
+  04-09.2020 : 
+  #User some more php artisan tinker command 
+     php artisan tinker 
+     factory(APP\Post::class)->create(['user_id'=>2])
+     factory(App\Post::class)->create(['title'=>"second Title"])
 
+  # I revised again the laravel Eleqoent relationship. 
+     #Define the user relationship with post 
+        public function posts(){
+                return $this->hasMany(Post::class);
+        }
+        $post =App\Post::find(3)
+        $post->user 
+○ By writing the elequent relationship you can write either default 
+			▪ return $this->belongsTo(User::class); // default is 'user_id' or 
+			▪ you an specifiy yourself return $this->belongsTo(User::class, 'person_id'); // user_id is specified as 'person_id' 
 
+§ Check it in php tinker 
+				□ php artisan tinker 
+				□ $article=App\Article::find(5) // 5 is the id of the article 
+				□ $article->tags->attach(1) // this  will attach tag 1  with article 5. 
+				□ $article->tags->attach([1,2,4]) // three tags were attached 
+				□ Now check the linking table of many to many relationship 
+				□ $article->tags->dettach([1,2,4]) // you can also deatch the tags 
+                You can use withTimestamps () or not 
+	#In order to debug laravel, there is a package called laravel debuger . Use this package to debuag . 
+	    https://github.com/barryvdh/laravel-debugbar
+	
+		composer require barryvdh/laravel-debugbar --dev
 
 
 
