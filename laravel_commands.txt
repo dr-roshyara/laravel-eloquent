@@ -1,3 +1,4 @@
+##ELOQUENT RELATIONSHIP 
 #This series is based on the tutorial of Laracasts. I am learning now Laravel Eleqoent . This series has 5 videos. I will learn them one by one. 
 #start of first video: 
 ##Install the following ppackage 
@@ -101,10 +102,48 @@ public function up()
                 You can use withTimestamps () or not 
 	#In order to debug laravel, there is a package called laravel debuger . Use this package to debuag . 
 	    https://github.com/barryvdh/laravel-debugbar
-	
 		composer require barryvdh/laravel-debugbar --dev
 
-
+#Create model to test Has many through relationship :
+    #Aim: 
+    #WE have  1. users or writers . They have different affiliation: e.g. left , right, conservative etc.  and then we have posts . These posts are written by the authors or users who have some kind of affiliation. 
+    #Now we would like to find out a relationship between the post and affiliation through the users.
+    #Find all the posts which have an affiliation "conservative" . 
+    #For this we do the following stuffs: 
+#   #create a model 
+    php artisan make:model  Affiliation -m -f 
+    #-m means migration 
+    #-f means factory 
+#   #Edit the table 
+#   # Edit the factories 
+    # while creating factory for user, we can use the  affiliation factory in user factory so that it automatically creates the affiliations . 
+    #Look at the user factory file and understand the following  code : 
+    $factory->define(User::class, function (Faker $faker) { 
+    return [
+            'name' => $faker->name,
+            'email' => $faker->unique()->safeEmail,
+            'email_verified_at' => now(),
+            'password' => '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', // password
+            'remember_token' => Str::random(10),
+            'affiliation_id'=>function (){
+                return factory(App\Affiliation::class)->create()->id;
+            }
+        ];
+    });
+   #Use the folloiwng command to  create users 
+   factory(App\user::class ,10)->create()
+   //the follwoing command creates 10 user with affiliation id=3 
+   factory(App\User::class, 10)->create(['affiliation_id'=>3])
+#Understand the Has many through relationship 
+    #make queeries in your datenbank 
+    //find all users with afffiliation id =1 
+    SELECT * FROM users WHERE affiliation_id=2;
+    //find all users with afffiliation id =2 
+    SELECT * FROM users WHERE affiliation_id=1;
+    select id form user where affiliation_id=1
+    SELECT id FROM users WHERE affiliation_id=2;
+    SELECT * FROM posts WHERE user_id IN (1,4);
+#   #
 
     
 
