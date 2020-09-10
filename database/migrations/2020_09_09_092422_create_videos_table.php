@@ -3,8 +3,8 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
-
-class CreateTagsTable extends Migration
+Use App\Series;
+class CreateVideosTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,10 +13,12 @@ class CreateTagsTable extends Migration
      */
     public function up()
     {
-        Schema::create('tags', function (Blueprint $table) {
-            
+        Schema::create('videos', function (Blueprint $table) {
             $table->id();
-            $table->string('name');        
+            $table->morphs('watchable');
+            $table->string('title');
+            $table->text('description');
+            $table->string('url');
             $table->timestamps();
         });
     }
@@ -28,6 +30,6 @@ class CreateTagsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('tags');
+        Schema::dropIfExists('videos');
     }
 }

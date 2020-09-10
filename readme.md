@@ -2,7 +2,7 @@
 
 #This project is just to learn about elequent relationshp in Laravel. 
 I have written all the commands used to learn in the 
-**laravel_commands.txt** 
+**laravel_commands.md** 
 file. 
 
 Please have a look on it . 
