@@ -9,7 +9,7 @@ class AppServiceProvider extends ServiceProvider
     /**
      * Register any application services.
      *
-     * @return void
+     * @return void 
      */
     public function register()
     {
@@ -26,9 +26,10 @@ class AppServiceProvider extends ServiceProvider
         //
         Relation::morphMap([
             'series'=>'App\Series',
-            'collection'=>'App\Collection'
+            'collection'=>'App\Collection',
         
         ]);
 
     }
 }
+

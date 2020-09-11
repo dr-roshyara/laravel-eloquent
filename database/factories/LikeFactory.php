@@ -2,11 +2,11 @@
 
 /** @var \Illuminate\Database\Eloquent\Factory $factory */
 
-use App\Tag;
+use App\Like;
 use Faker\Generator as Faker;
 
-$factory->define(Tag::class, function (Faker $faker) {
+$factory->define(Like::class, function (Faker $faker) {
     return [
-        // 
+        //
     ];
 });

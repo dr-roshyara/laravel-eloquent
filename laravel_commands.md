@@ -316,9 +316,15 @@ I am learning now **Laravel Eleqoent** . This series has 5 videos.
 #   #Check the relationship with tinker 
     php artisan tinker 
     $series =App\Series::first()
-    $collection=App\Collection::first();
+    #add new series 
+    $series->videos()->create(['title'=>"new text", 'description'=>"my des", 'url'=>"url"])
     $series->videos 
+    #
+    $collection=App\Collection::first();
     $collection->videos
+    $collection->videos()->create(['title'=>"new text", 'description'=>"my des", 'url'=>"url"])
+    $collection->videos
+    #
     #important thing is that you have to define the watchable_type as the model : i.e. 
      watchable_type= App\Series 
      or 
@@ -382,6 +388,143 @@ I am learning now **Laravel Eleqoent** . This series has 5 videos.
     or 
     watchable_type ='collection'
 # Many to Many Polymorphic relationship 
+    #In above example polymorphic relationship we have collections and  series where the video belongs either to collection or to the series. 
+    #Now Here is a situation where the video belongs to collection and at the same time it also belongs to the series. How should we solve the problem?
+    #Another example is: relationship between: posts users , comments, likes. 
+    #Likes may  be associated with post or they may also be associated with comments. 
+    #So at such a situation many to many polymorphic relationship palys an important role. 
+    #We learn this  relationship by using php unit test 
+        php artisan make:test LikesTest
+        ./vendor/bin/phpunit
+        #There must be okay tests  as result 
+#    #Now lets write a test. 
+    open the LikesTest.php file and write the test as followng to proceed the futher commands.  
+    <?php
+        namespace Tests\Feature;
+        use App\Post;
+        use App\User;
+        use Illuminate\Foundation\Testing\RefreshDatabase;
+        use Illuminate\Foundation\Testing\WithFaker;
+        use Tests\TestCase;
+
+        class LikePostsTest extends TestCase
+        {
+            /**
+            * A basic feature test example.
+            *
+            * @return void
+            */
+            
+            use RefreshDatabase; // it refreshees the database after testing . that means all the data entered to the database were deleted again after the test. 
+            public function testA_post_can_be_liked(){
+            //the following line  creates a user and then it acts as authnicated user. 
+              $this->actingAs(factory(User::class)->create());
+              $post =factory(Post::class)->create(); // this creates a post  
+                $post->like();  //this creates a like                 
+                $this->assertCount(1, $post->likes); //this counts the like 
+                $this->assertTrue($post->likes->contains('id', auth()->id())); // this compares the id of user and auth->user and excepts that they are the same. 
+            }
+            
+        }
+    #Based on this commands, we should define the relationship between post and likes . We should also defines  define the function  like. They are defined as following in the user model .
+    #
+        public function like($user=null){
+            $user = $user ?: auth()->user();
+            return $this->likes()->attach($user);
+
+        }
+        public function likes(){ 
+                return $this->belongsToMany(User::class)->withTimeStamps();
+        }
+#   #test the comments likes creation process. 
+    #first make comment table. 
+    this is like following 
+    public function up()
+        {
+            Schema::create('comments', function (Blueprint $table) {
+                $table->id();
+                $table->unsignedInteger('user_id'); 
+                $table->unsignedInteger('post_id');
+                $table->string('title');
+                $table->text('body');
+                $table->timestamps();
+            });
+        }
+#    #Create factory for comment.
+            //CommentFactory.php 
+            <?php
+
+            /** @var \Illuminate\Database\Eloquent\Factory $factory */
+
+            use App\Comment;
+            use Faker\Generator as Faker;
+
+            $factory->define(Comment::class, function (Faker $faker) {
+                return [
+                    //
+                    'user_id'=> factory(App\User::class)->create(),
+                    'post_id'=> factory(App\Post::class)->create(),        
+                    // 'user_id'=> App\User::all()->random(),
+                    'title'=>$faker->sentence,
+                    'body'=>$faker->paragraph,
+                    
+                ];
+            });
+#   #write the testcode in LikeTest.php 
+        public function test_a_comment_can_be_liked(){
+            $this->actingAs(factory(User::class)->create());
+            // $post =factory(Post::class)->create();
+            $comment =factory(Comment::class)->create();
+            $comment->like();
+            $this->assertCount(1,$comment->likes); 
+            }
+#   #Define the Likable relationship
+    #For this the best way is to define a trait in Laravel 
+    touch app/Likable.php 
+    #Edit the Likable.php file as trait  
+    the code is as following 
+    <?php 
+    namespace App;
+    use App\Like;
+
+    trait Likable{ 
+        
+        public function like($user=null){
+            $user = $user ?: auth()->user();
+            return $this->likes()->attach($user);
+    
+        }
+        public function likes(){ 
+                return $this->morphToMany(User::class,'likable')->withTimeStamps();
+        }
+    
+    }
+    #Add 
+    use Likable ;
+    in Post and Comment Model
+#   #create a likable table 
+    public function up()
+    {
+        Schema::create('likables', function (Blueprint $table) {
+            $table->id();
+            $table->unsignedInteger('user_id');
+            $table->unsignedInteger('likable_id');
+            $table->string('likable_type');
+            $table->timestamps();
+        });
+    } 
+#   #
+    for the test use 
+    ./vendor/bin/phpunit 
+##  #once all test are passed you are finished with this series. 
+    #What we learned ? 
+    #one to one relationship 
+    #many to many relationship 
+    #one to many Through 
+    #polymorphic relationship 
+    #many to many polimorphic relationship
+    
+
 
 
 
